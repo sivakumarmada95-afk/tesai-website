@@ -1,64 +1,46 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>TesAI Chat</title>
-
-<style>
-
-body{
-font-family:Arial;
-display:flex;
-margin:0;
-}
-
-.sidebar{
-width:250px;
-background:#202123;
-color:white;
-height:100vh;
-padding:20px;
-}
-
-.chat{
-flex:1;
-padding:20px;
-}
-
-input{
-width:80%;
-padding:10px;
-}
-
-button{
-padding:10px;
-}
-
-</style>
-
-</head>
-
-<body>
-
 <div class="sidebar">
-
 <h2>TesAI</h2>
-
-<button>+ New Chat</button>
-
+<button onclick="newChat()">+ New Chat</button>
 <p>Chat 1</p>
 <p>Chat 2</p>
-
 </div>
 
 <div class="chat">
 
 <h2>TesAI Assistant</h2>
 
-<input placeholder="Ask anything...">
+<div id="messages" style="height:400px;border:1px solid #ccc;padding:10px;overflow:auto;"></div>
 
-<button>Send</button>
+<input id="userInput" placeholder="Ask anything...">
+
+<button onclick="sendMessage()">Send</button>
 
 </div>
 
-</body>
-</html>
+<script>
+
+function sendMessage(){
+
+let input=document.getElementById("userInput");
+
+let message=input.value;
+
+if(message==="") return;
+
+let chat=document.getElementById("messages");
+
+chat.innerHTML+= "<p><b>You:</b> "+message+"</p>";
+
+chat.innerHTML+= "<p><b>TesAI:</b> I'm learning... AI reply coming soon!</p>";
+
+input.value="";
+
+}
+
+function newChat(){
+
+document.getElementById("messages").innerHTML="";
+
+}
+
+</script>
