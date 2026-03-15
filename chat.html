@@ -4,7 +4,6 @@
 <title>TesAI Chat</title>
 
 <style>
-
 body{
 margin:0;
 font-family:Arial;
@@ -41,7 +40,6 @@ button{
 padding:10px;
 cursor:pointer;
 }
-
 </style>
 
 </head>
@@ -62,14 +60,13 @@ cursor:pointer;
 <div id="messages"></div>
 
 <input id="userInput" placeholder="Ask anything...">
-
-<button onclick="sendMessage()">Send</button>
+<button id="sendBtn">Send</button>
 
 </div>
 
 <script>
 
-function sendMessage(){
+document.getElementById("sendBtn").addEventListener("click", function(){
 
 var input=document.getElementById("userInput");
 var message=input.value;
@@ -79,16 +76,14 @@ if(message==="") return;
 var chat=document.getElementById("messages");
 
 chat.innerHTML += "<p><b>You:</b> "+message+"</p>";
-chat.innerHTML += "<p><b>TesAI:</b> I'm learning. AI response coming soon!</p>";
+chat.innerHTML += "<p><b>TesAI:</b> I am learning. AI coming soon!</p>";
 
 input.value="";
 
-}
+});
 
 function clearChat(){
-
 document.getElementById("messages").innerHTML="";
-
 }
 
 </script>
