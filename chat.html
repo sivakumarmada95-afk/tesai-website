@@ -26,7 +26,7 @@ padding:20px;
 }
 
 #messages{
-height:400px;
+height:350px;
 border:1px solid #ccc;
 padding:10px;
 overflow:auto;
@@ -50,14 +50,10 @@ cursor:pointer;
 <body>
 
 <div class="sidebar">
-
 <h2>TesAI</h2>
-
-<button onclick="newChat()">+ New Chat</button>
-
+<button onclick="clearChat()">+ New Chat</button>
 <p>Chat 1</p>
 <p>Chat 2</p>
-
 </div>
 
 <div class="chat">
@@ -74,25 +70,23 @@ cursor:pointer;
 
 <script>
 
-function sendMessage(){
+function sendMessage() {
 
-let input=document.getElementById("userInput");
+var input = document.getElementById("userInput");
+var message = input.value;
 
-let message=input.value;
+if(message == "") return;
 
-if(message==="") return;
+var chat = document.getElementById("messages");
 
-let chat=document.getElementById("messages");
+chat.innerHTML += "<p><b>You:</b> " + message + "</p>";
+chat.innerHTML += "<p><b>TesAI:</b> I'm learning. AI coming soon!</p>";
 
-chat.innerHTML+= "<p><b>You:</b> "+message+"</p>";
-
-chat.innerHTML+= "<p><b>TesAI:</b> I am learning. AI response coming soon!</p>";
-
-input.value="";
+input.value = "";
 
 }
 
-function newChat(){
+function clearChat(){
 
 document.getElementById("messages").innerHTML="";
 
