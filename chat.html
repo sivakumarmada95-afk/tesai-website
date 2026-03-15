@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 <title>TesAI Chat</title>
 
@@ -29,8 +30,11 @@ flex-direction:column;
 
 #messages{
 flex:1;
+border:1px solid #ccc;
+padding:10px;
 overflow:auto;
 margin-bottom:10px;
+background:white;
 }
 
 .message{
@@ -41,7 +45,7 @@ max-width:60%;
 }
 
 .user{
-background:#d1e7ff;
+background:#cfe9ff;
 align-self:flex-end;
 }
 
@@ -50,13 +54,18 @@ background:#e5e5e5;
 align-self:flex-start;
 }
 
+.inputArea{
+display:flex;
+gap:10px;
+}
+
 input{
-width:75%;
+flex:1;
 padding:10px;
 }
 
 button{
-padding:10px;
+padding:10px 15px;
 cursor:pointer;
 }
 
@@ -67,10 +76,14 @@ cursor:pointer;
 <body>
 
 <div class="sidebar">
+
 <h2>TesAI</h2>
+
 <button onclick="clearChat()">+ New Chat</button>
+
 <p>Chat 1</p>
 <p>Chat 2</p>
+
 </div>
 
 <div class="chat">
@@ -79,14 +92,19 @@ cursor:pointer;
 
 <div id="messages"></div>
 
+<div class="inputArea">
+
 <input id="userInput" placeholder="Ask anything...">
-<button id="sendBtn">Send</button>
+
+<button onclick="sendMessage()">Send</button>
+
+</div>
 
 </div>
 
 <script>
 
-document.getElementById("sendBtn").addEventListener("click", function(){
+function sendMessage(){
 
 var input=document.getElementById("userInput");
 var message=input.value;
@@ -96,25 +114,33 @@ if(message==="") return;
 var chat=document.getElementById("messages");
 
 chat.innerHTML += "<div class='message user'>"+message+"</div>";
-chat.innerHTML += "<div class='message ai'>I am learning. AI coming soon!</div>";
+
+chat.innerHTML += "<div class='message ai'>TesAI: I am learning. AI coming soon!</div>";
 
 input.value="";
 
-});
+chat.scrollTop = chat.scrollHeight;
 
-function clearChat(){
-document.getElementById("messages").innerHTML="";
 }
 
-</document.getElementById("userInput").addEventListener("keypress", function(event) {
+function clearChat(){
+
+document.getElementById("messages").innerHTML="";
+
+}
+
+document.getElementById("userInput").addEventListener("keypress", function(event){
 
 if(event.key === "Enter"){
 
-document.getElementById("sendBtn").click();
+sendMessage();
 
 }
 
-});>
+});
+
+</script>
 
 </body>
+
 </html>
