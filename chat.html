@@ -1,3 +1,8 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>TesAI Chat</title>
+
 <style>
 
 body{
@@ -56,3 +61,52 @@ cursor:pointer;
 }
 
 </style>
+
+</head>
+
+<body>
+
+<div class="sidebar">
+<h2>TesAI</h2>
+<button onclick="clearChat()">+ New Chat</button>
+<p>Chat 1</p>
+<p>Chat 2</p>
+</div>
+
+<div class="chat">
+
+<h2>TesAI Assistant</h2>
+
+<div id="messages"></div>
+
+<input id="userInput" placeholder="Ask anything...">
+<button id="sendBtn">Send</button>
+
+</div>
+
+<script>
+
+document.getElementById("sendBtn").addEventListener("click", function(){
+
+var input=document.getElementById("userInput");
+var message=input.value;
+
+if(message==="") return;
+
+var chat=document.getElementById("messages");
+
+chat.innerHTML += "<div class='message user'>"+message+"</div>";
+chat.innerHTML += "<div class='message ai'>I am learning. AI coming soon!</div>";
+
+input.value="";
+
+});
+
+function clearChat(){
+document.getElementById("messages").innerHTML="";
+}
+
+</script>
+
+</body>
+</html>
