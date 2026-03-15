@@ -1,13 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>TesAI Chat</title>
-
 <style>
+
 body{
 margin:0;
 font-family:Arial;
 display:flex;
+background:#f5f5f5;
 }
 
 .sidebar{
@@ -21,18 +18,35 @@ padding:20px;
 .chat{
 flex:1;
 padding:20px;
+display:flex;
+flex-direction:column;
 }
 
 #messages{
-height:350px;
-border:1px solid #ccc;
-padding:10px;
+flex:1;
 overflow:auto;
 margin-bottom:10px;
 }
 
+.message{
+padding:10px;
+margin:5px 0;
+border-radius:8px;
+max-width:60%;
+}
+
+.user{
+background:#d1e7ff;
+align-self:flex-end;
+}
+
+.ai{
+background:#e5e5e5;
+align-self:flex-start;
+}
+
 input{
-width:70%;
+width:75%;
 padding:10px;
 }
 
@@ -40,62 +54,5 @@ button{
 padding:10px;
 cursor:pointer;
 }
+
 </style>
-
-</head>
-
-<body>
-
-<div class="sidebar">
-<h2>TesAI</h2>
-<button onclick="clearChat()">+ New Chat</button>
-<p>Chat 1</p>
-<p>Chat 2</p>
-</div>
-
-<div class="chat">
-
-<h2>TesAI Assistant</h2>
-
-<div id="messages"></div>
-
-<input id="userInput" placeholder="Ask anything...">
-<button id="sendBtn">Send</button>
-
-</div>
-
-<script>
-
-document.getElementById("sendBtn").addEventListener("click", function(){
-
-var input=document.getElementById("userInput");
-var message=input.value;
-
-if(message==="") return;
-
-var chat=document.getElementById("messages");
-
-chat.innerHTML += "<p><b>You:</b> "+message+"</p>";
-chat.innerHTML += "<p><b>TesAI:</b> I am learning. AI coming soon!</p>";
-
-input.value="";
-
-});
-
-function clearChat(){
-document.getElementById("messages").innerHTML="";
-}
-
-</script>
-
-</body>
-</html>
-document.getElementById("userInput").addEventListener("keypress", function(event) {
-
-if(event.key === "Enter"){
-
-document.getElementById("sendBtn").click();
-
-}
-
-});
