@@ -1,0 +1,19 @@
+<script>
+
+document.getElementById("sendBtn").addEventListener("click", function(){
+
+var input = document.getElementById("userInput");
+var message = input.value;
+
+if(message === "") return;
+
+var chat = document.getElementById("messages");
+
+chat.innerHTML += "<p><b>You:</b> " + message + "</p>";
+chat.innerHTML += "<p><b>TesAI:</b> I am learning. AI reply coming soon!</p>";
+
+input.value = "";
+
+});
+
+</script>
