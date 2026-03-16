@@ -5,19 +5,15 @@ async function sendMessage() {
   const input = document.getElementById("userInput");
   const message = input.value.trim();
 
-  if (message === "") return;
+  if (!message) return;
 
   const chat = document.getElementById("messages");
 
-  // show user message
   chat.innerHTML += `<div class="message user">${message}</div>`;
-
   input.value = "";
 
-  // loading message
-  chat.innerHTML += `<div class="message ai" id="loadingMsg">TesAI is thinking...</div>`;
-
-  chat.scrollTop = chat.scrollHeight;
+  const loading = `<div class="message ai" id="loadingMsg">TesAI is thinking...</div>`;
+  chat.innerHTML += loading;
 
   try {
 
@@ -26,7 +22,7 @@ async function sendMessage() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ message: message })
+      body: JSON.stringify({ message })
     });
 
     const data = await response.json();
@@ -39,15 +35,14 @@ async function sendMessage() {
 
     document.getElementById("loadingMsg").remove();
 
-    chat.innerHTML += `<div class="message ai">Error connecting to AI.</div>`;
+    chat.innerHTML += `<div class="message ai">AI connection error.</div>`;
 
   }
 
   chat.scrollTop = chat.scrollHeight;
+
 }
 
-
-// clear chat
 function clearChat() {
 
   document.getElementById("messages").innerHTML = "";
@@ -55,23 +50,24 @@ function clearChat() {
 }
 
 
-// ENTER key support
-document.getElementById("userInput").addEventListener("keypress", function(event) {
+// Wait until page loads before attaching button event
+window.onload = function() {
 
-  if (event.key === "Enter") {
+  const sendBtn = document.getElementById("sendBtn");
+  const input = document.getElementById("userInput");
 
-    sendMessage();
-
+  if (sendBtn) {
+    sendBtn.onclick = sendMessage;
   }
 
-});
+  if (input) {
+    input.addEventListener("keypress", function(event){
+      if(event.key === "Enter"){
+        sendMessage();
+      }
+    });
+  }
 
+};
 
-// SEND button support
-document.getElementById("sendBtn").addEventListener("click", function(){
-
-  sendMessage();
-
-});
-
-</script>
+</script><button id="sendBtn">Send</button>
