@@ -115,7 +115,19 @@ var chat=document.getElementById("messages");
 
 chat.innerHTML += "<div class='message user'>"+message+"</div>";
 
-chat.innerHTML += "<div class='message ai'>TesAI: I am learning. AI coming soon!</div>";
+chat.innerHTML += "<div class='message ai'>TesAI is thinking...</div>";
+
+const response = await fetch("/api/chat", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({ message: message })
+});
+
+const data = await response.json();
+
+chat.innerHTML += "<div class='message ai'>" + data.reply + "</div>";
 
 input.value="";
 
