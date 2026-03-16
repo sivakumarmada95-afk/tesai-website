@@ -131,5 +131,23 @@ Start Chat
 © 2026 TesAI • AI Assistant
 </footer>
 
+
+<button onclick="googleLogin()">Login with Google</button>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const supabaseClient = supabase.createClient(
+"https://thhfwcmxidluvskeaebo.supabase.co",
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.Q7QPaCbfwKesITzS9vDjh1lALvRZlt3wxAerAa4D7No"
+);
+
+async function googleLogin() {
+await supabaseClient.auth.signInWithOAuth({
+provider: "google"
+});
+}
+</script>
+
 </body>
 </html>
