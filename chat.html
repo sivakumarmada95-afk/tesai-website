@@ -1,163 +1,317 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>TesAI Chat</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TesAI</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-<style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f7f7f8;
+      color: #111827;
+      height: 100vh;
+      display: flex;
+    }
 
-body{
-margin:0;
-font-family:Arial;
-display:flex;
-background:#f5f5f5;
-}
+    .sidebar {
+      width: 260px;
+      background: #171717;
+      color: white;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
 
-.sidebar{
-width:250px;
-background:#202123;
-color:white;
-height:100vh;
-padding:20px;
-}
+    .brand {
+      font-size: 32px;
+      font-weight: 700;
+      margin: 0;
+    }
 
-.chat{
-flex:1;
-padding:20px;
-display:flex;
-flex-direction:column;
-}
+    .new-chat-btn {
+      background: #2b2b2b;
+      color: white;
+      border: 1px solid #3a3a3a;
+      padding: 12px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 15px;
+      text-align: left;
+    }
 
-#messages{
-flex:1;
-border:1px solid #ccc;
-background:white;
-padding:10px;
-overflow:auto;
-margin-bottom:10px;
-min-height:400px;
-}
+    .new-chat-btn:hover {
+      background: #343434;
+    }
 
-.message{
-padding:10px;
-margin:8px 0;
-border-radius:8px;
-max-width:70%;
-}
+    .history {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 6px;
+    }
 
-.user{
-background:#cfe9ff;
-margin-left:auto;
-}
+    .history-item {
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: #e5e7eb;
+      background: transparent;
+      font-size: 15px;
+    }
 
-.ai{
-background:#e5e5e5;
-}
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
 
-.inputArea{
-display:flex;
-gap:10px;
-}
+    .topbar {
+      padding: 18px 24px;
+      border-bottom: 1px solid #e5e7eb;
+      background: white;
+    }
 
-#userInput{
-flex:1;
-padding:10px;
-font-size:16px;
-}
+    .title {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+    }
 
-#sendBtn{
-padding:10px 20px;
-cursor:pointer;
-}
+    .chat-wrap {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 0;
+    }
 
-</style>
+    .messages {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .message-row {
+      display: flex;
+      width: 100%;
+    }
+
+    .message-row.user {
+      justify-content: flex-end;
+    }
+
+    .message-row.ai {
+      justify-content: flex-start;
+    }
+
+    .message {
+      max-width: 75%;
+      padding: 14px 16px;
+      border-radius: 16px;
+      line-height: 1.5;
+      font-size: 16px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .message.user {
+      background: #dbeafe;
+      color: #111827;
+      border-bottom-right-radius: 6px;
+    }
+
+    .message.ai {
+      background: white;
+      color: #111827;
+      border: 1px solid #e5e7eb;
+      border-bottom-left-radius: 6px;
+    }
+
+    .composer-wrap {
+      border-top: 1px solid #e5e7eb;
+      background: white;
+      padding: 16px;
+    }
+
+    .composer {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    #userInput {
+      flex: 1;
+      padding: 14px 16px;
+      font-size: 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      outline: none;
+    }
+
+    #userInput:focus {
+      border-color: #9ca3af;
+    }
+
+    #sendBtn {
+      padding: 14px 20px;
+      font-size: 15px;
+      border: none;
+      border-radius: 12px;
+      background: #111827;
+      color: white;
+      cursor: pointer;
+    }
+
+    #sendBtn:hover {
+      background: #1f2937;
+    }
+
+    .hint {
+      max-width: 900px;
+      margin: 8px auto 0;
+      padding: 0 4px;
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+
+      .message {
+        max-width: 88%;
+      }
+
+      .title {
+        font-size: 20px;
+      }
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="sidebar">
-<h2>TesAI</h2>
-<button onclick="clearChat()">+ New Chat</button>
-<p>Chat 1</p>
-<p>Chat 2</p>
-</div>
+  <aside class="sidebar">
+    <h1 class="brand">TesAI</h1>
+    <button class="new-chat-btn" onclick="clearChat()">+ New Chat</button>
 
-<div class="chat">
+    <div class="history">
+      <div class="history-item">Chat 1</div>
+      <div class="history-item">Chat 2</div>
+    </div>
+  </aside>
 
-<h1>TesAI Assistant</h1>
+  <main class="main">
+    <div class="topbar">
+      <h2 class="title">TesAI Assistant</h2>
+    </div>
 
-<div id="messages"></div>
+    <div class="chat-wrap" id="chatWrap">
+      <div class="messages" id="messages"></div>
+    </div>
 
-<div class="inputArea">
-<input id="userInput" placeholder="Ask anything...">
-<button id="sendBtn">Send</button>
-</div>
+    <div class="composer-wrap">
+      <div class="composer">
+        <input id="userInput" type="text" placeholder="Ask anything..." />
+        <button id="sendBtn">Send</button>
+      </div>
+      <div class="hint">TesAI can make mistakes. Check important information.</div>
+    </div>
+  </main>
 
-</div>
+  <script>
+    const messagesEl = document.getElementById("messages");
+    const inputEl = document.getElementById("userInput");
+    const sendBtnEl = document.getElementById("sendBtn");
+    const chatWrapEl = document.getElementById("chatWrap");
 
-<script>
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
 
-async function sendMessage(){
+    function addMessage(role, text, id = null) {
+      const row = document.createElement("div");
+      row.className = `message-row ${role}`;
 
-const input=document.getElementById("userInput")
-const message=input.value.trim()
+      const bubble = document.createElement("div");
+      bubble.className = `message ${role}`;
+      if (id) bubble.id = id;
+      bubble.innerHTML = escapeHtml(text);
 
-if(!message) return
+      row.appendChild(bubble);
+      messagesEl.appendChild(row);
+      scrollToBottom();
+    }
 
-const chat=document.getElementById("messages")
+    function scrollToBottom() {
+      chatWrapEl.scrollTop = chatWrapEl.scrollHeight;
+    }
 
-chat.innerHTML+=`<div class="message user">${message}</div>`
+    function clearChat() {
+      messagesEl.innerHTML = "";
+      inputEl.focus();
+    }
 
-input.value=""
+    async function sendMessage() {
+      const message = inputEl.value.trim();
+      if (!message) return;
 
-chat.innerHTML+=`<div class="message ai" id="loading">TesAI thinking...</div>`
+      addMessage("user", message);
+      inputEl.value = "";
+      inputEl.focus();
 
-chat.scrollTop=chat.scrollHeight
+      addMessage("ai", "TesAI is thinking...", "loadingMsg");
 
-try{
+      try {
+        const response = await fetch("/api/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ message })
+        });
 
-const response=await fetch("/api/chat",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({message})
-})
+        const data = await response.json();
 
-const data=await response.json()
+        const loadingEl = document.getElementById("loadingMsg");
+        if (loadingEl) {
+          loadingEl.parentElement.remove();
+        }
 
-document.getElementById("loading").remove()
+        addMessage("ai", data.reply || "No reply received.");
+      } catch (error) {
+        const loadingEl = document.getElementById("loadingMsg");
+        if (loadingEl) {
+          loadingEl.parentElement.remove();
+        }
 
-chat.innerHTML+=`<div class="message ai">${data.reply}</div>`
+        addMessage("ai", "Error connecting to AI.");
+      }
+    }
 
-}catch(e){
+    sendBtnEl.addEventListener("click", sendMessage);
 
-document.getElementById("loading").remove()
+    inputEl.addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        sendMessage();
+      }
+    });
 
-chat.innerHTML+=`<div class="message ai">Error connecting AI</div>`
-
-}
-
-chat.scrollTop=chat.scrollHeight
-
-}
-
-function clearChat(){
-document.getElementById("messages").innerHTML=""
-}
-
-window.onload=function(){
-
-document.getElementById("sendBtn").onclick=sendMessage
-
-document.getElementById("userInput").addEventListener("keypress",function(e){
-if(e.key==="Enter"){
-sendMessage()
-}
-})
-
-}
-
-</script>
-
+    window.onload = function() {
+      inputEl.focus();
+    };
+  </script>
 </body>
 </html>
