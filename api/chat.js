@@ -25,12 +25,18 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
+    if (!data.choices) {
+      console.error("OpenAI error:", data);
+      return res.status(500).json({ reply: "OpenAI API error" });
+    }
+
     const reply = data.choices[0].message.content;
 
     res.status(200).json({ reply });
 
   } catch (error) {
 
+    console.error(error);
     res.status(500).json({ reply: "AI connection error" });
 
   }
