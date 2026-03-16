@@ -1,73 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>TesAI Chat</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+display:flex;
+background:#f5f5f5;
+}
+
+.sidebar{
+width:250px;
+background:#202123;
+color:white;
+height:100vh;
+padding:20px;
+}
+
+.chat{
+flex:1;
+padding:20px;
+display:flex;
+flex-direction:column;
+}
+
+#messages{
+flex:1;
+border:1px solid #ccc;
+background:white;
+padding:10px;
+overflow:auto;
+margin-bottom:10px;
+min-height:400px;
+}
+
+.message{
+padding:10px;
+margin:8px 0;
+border-radius:8px;
+max-width:70%;
+}
+
+.user{
+background:#cfe9ff;
+margin-left:auto;
+}
+
+.ai{
+background:#e5e5e5;
+}
+
+.inputArea{
+display:flex;
+gap:10px;
+}
+
+#userInput{
+flex:1;
+padding:10px;
+font-size:16px;
+}
+
+#sendBtn{
+padding:10px 20px;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+<h2>TesAI</h2>
+<button onclick="clearChat()">+ New Chat</button>
+<p>Chat 1</p>
+<p>Chat 2</p>
+</div>
+
+<div class="chat">
+
+<h1>TesAI Assistant</h1>
+
+<div id="messages"></div>
+
+<div class="inputArea">
+<input id="userInput" placeholder="Ask anything...">
+<button id="sendBtn">Send</button>
+</div>
+
+</div>
+
 <script>
 
-async function sendMessage() {
+async function sendMessage(){
 
-  const input = document.getElementById("userInput");
-  const message = input.value.trim();
+const input=document.getElementById("userInput")
+const message=input.value.trim()
 
-  if (!message) return;
+if(!message) return
 
-  const chat = document.getElementById("messages");
+const chat=document.getElementById("messages")
 
-  chat.innerHTML += `<div class="message user">${message}</div>`;
-  input.value = "";
+chat.innerHTML+=`<div class="message user">${message}</div>`
 
-  const loading = `<div class="message ai" id="loadingMsg">TesAI is thinking...</div>`;
-  chat.innerHTML += loading;
+input.value=""
 
-  try {
+chat.innerHTML+=`<div class="message ai" id="loading">TesAI thinking...</div>`
 
-    const response = await fetch("/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ message })
-    });
+chat.scrollTop=chat.scrollHeight
 
-    const data = await response.json();
+try{
 
-    document.getElementById("loadingMsg").remove();
+const response=await fetch("/api/chat",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({message})
+})
 
-    chat.innerHTML += `<div class="message ai">${data.reply}</div>`;
+const data=await response.json()
 
-  } catch (error) {
+document.getElementById("loading").remove()
 
-    document.getElementById("loadingMsg").remove();
+chat.innerHTML+=`<div class="message ai">${data.reply}</div>`
 
-    chat.innerHTML += `<div class="message ai">AI connection error.</div>`;
+}catch(e){
 
-  }
+document.getElementById("loading").remove()
 
-  chat.scrollTop = chat.scrollHeight;
+chat.innerHTML+=`<div class="message ai">Error connecting AI</div>`
 
 }
 
-function clearChat() {
-
-  document.getElementById("messages").innerHTML = "";
+chat.scrollTop=chat.scrollHeight
 
 }
 
+function clearChat(){
+document.getElementById("messages").innerHTML=""
+}
 
-// Wait until page loads before attaching button event
-window.onload = function() {
+window.onload=function(){
 
-  const sendBtn = document.getElementById("sendBtn");
-  const input = document.getElementById("userInput");
+document.getElementById("sendBtn").onclick=sendMessage
 
-  if (sendBtn) {
-    sendBtn.onclick = sendMessage;
-  }
+document.getElementById("userInput").addEventListener("keypress",function(e){
+if(e.key==="Enter"){
+sendMessage()
+}
+})
 
-  if (input) {
-    input.addEventListener("keypress", function(event){
-      if(event.key === "Enter"){
-        sendMessage();
-      }
-    });
-  }
+}
 
-};
+</script>
 
-</script><button id="sendBtn">Send</button>
+</body>
+</html>
