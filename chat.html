@@ -5,7 +5,28 @@
 <meta name="robots" content="index, follow">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TesAI</title>
+  <title>TesAI</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+
+const supabase = supabase.createClient(
+"https://thhfwcmxidluvskeaebo.supabase.co",
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoaGZ3Y214aWRsdXZza2VhZWJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NzEzNTQsImV4cCI6MjA4OTI0NzM1NH0.Q7QPaCbfwKesITzS9vDjh1lALvRZlt3wxAerAa4D7No"
+);
+
+async function checkUser(){
+
+const { data } = await supabase.auth.getUser();
+
+if(!data.user){
+location.href="login.html";
+}
+
+}
+
+checkUser();
+
+</script>
   <style>
     * {
       box-sizing: border-box;
