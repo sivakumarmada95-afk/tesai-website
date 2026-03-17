@@ -1,103 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>TesAI - Free AI Assistant</title>
-
-<meta name="description" content="TesAI is a smart AI assistant like ChatGPT that helps answer questions, generate ideas, and solve problems instantly.">
-
-<meta name="robots" content="index, follow">
-
-<link rel="canonical" href="https://tesai.in/">
+<title>TesAI Login</title>
 
 <style>
-
-body{
+body {
 font-family: Arial, sans-serif;
-margin:0;
-background:#f7f7f8;
-color:#111;
-text-align:center;
+background: #f4f6f8;
+display: flex;
+justify-content: center;
+align-items: center;
+height: 100vh;
+margin: 0;
 }
 
-header{
-background:#111827;
-color:white;
-padding:20px;
-font-size:24px;
-font-weight:bold;
+.container {
+background: #fff;
+padding: 30px;
+border-radius: 10px;
+width: 350px;
+box-shadow: 0 0 15px rgba(0,0,0,0.1);
+text-align: center;
 }
 
-.hero{
-margin-top:100px;
+h2 {
+margin-bottom: 20px;
 }
 
-.hero h1{
-font-size:48px;
-margin-bottom:10px;
+input {
+width: 100%;
+padding: 12px;
+margin: 10px 0;
+border-radius: 5px;
+border: 1px solid #ccc;
 }
 
-.hero p{
-font-size:20px;
-color:#555;
+button {
+width: 100%;
+padding: 12px;
+margin-top: 10px;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+font-size: 14px;
 }
 
-.start-btn{
-margin-top:40px;
-padding:15px 35px;
-font-size:18px;
-background:#2563eb;
-color:white;
-border:none;
-border-radius:8px;
-cursor:pointer;
+.email-btn {
+background: #2d6cdf;
+color: white;
 }
 
-.start-btn:hover{
-background:#1e40af;
+.signup-btn {
+background: #3b82f6;
+color: white;
 }
 
-.features{
-margin-top:80px;
-display:flex;
-justify-content:center;
-gap:40px;
-flex-wrap:wrap;
+.google-btn {
+background: #ea4335;
+color: white;
 }
 
-.feature{
-background:white;
-padding:25px;
-width:250px;
-border-radius:10px;
-box-shadow:0 4px 10px rgba(0,0,0,0.05);
+.github-btn {
+background: black;
+color: white;
 }
 
-footer{
-margin-top:100px;
-padding:20px;
-color:#777;
-font-size:14px;
+button:hover {
+opacity: 0.9;
 }
-
 </style>
-
 </head>
+
+<body>
+
+<div class="container">
+<h2>TesAI Login</h2>
+
+<input type="email" id="email" placeholder="Enter Email">
+<input type="password" id="password" placeholder="Enter Password">
+
+<button class="email-btn" onclick="loginEmail()">Login with Email</button>
+<button class="signup-btn" onclick="signupEmail()">Create Account</button>
+
+<hr>
+
+<button class="google-btn" onclick="googleLogin()">Login with Google</button>
+<button class="github-btn" onclick="githubLogin()">Login with GitHub</button>
+
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-// ====== CONFIG ======
+
+// ===== CONFIG =====
 const supabaseClient = supabase.createClient(
 "https://thhfwcmxidluvskeaebo.supabase.co",
 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.Q7QPaCbfwKesITzS9vDjh1lALvRZlt3wxAerAa4D7No"
 );
 
-// ====== EMAIL LOGIN ======
+// ===== LOGIN =====
 async function loginEmail() {
 const email = document.getElementById("email").value;
 const password = document.getElementById("password").value;
@@ -110,12 +114,12 @@ password
 if (error) {
 alert(error.message);
 } else {
-alert("Login Successful ✅");
+alert("Login successful ✅");
 window.location.href = "chat.html";
 }
 }
 
-// ====== SIGNUP ======
+// ===== SIGNUP =====
 async function signupEmail() {
 const email = document.getElementById("email").value;
 const password = document.getElementById("password").value;
@@ -128,11 +132,11 @@ password
 if (error) {
 alert(error.message);
 } else {
-alert("Account Created ✅ Check your email");
+alert("Account created ✅ Check your email");
 }
 }
 
-// ====== GOOGLE LOGIN ======
+// ===== GOOGLE LOGIN =====
 async function googleLogin() {
 await supabaseClient.auth.signInWithOAuth({
 provider: "google",
@@ -142,7 +146,7 @@ redirectTo: "https://tesai.in"
 });
 }
 
-// ====== GITHUB LOGIN ======
+// ===== GITHUB LOGIN =====
 async function githubLogin() {
 await supabaseClient.auth.signInWithOAuth({
 provider: "github",
@@ -152,82 +156,18 @@ redirectTo: "https://tesai.in"
 });
 }
 
-// ====== CHECK LOGIN SESSION ======
+// ===== CHECK USER =====
 async function checkUser() {
 const { data } = await supabaseClient.auth.getUser();
 
 if (data.user) {
-console.log("User Logged In:", data.user.email);
+console.log("User:", data.user.email);
 }
 }
 
 checkUser();
 
-</script><body>
-
-<header>
-TesAI
-</header>
-
-<div class="hero">
-
-<h1>Your Smart AI Assistant</h1>
-
-<p>Ask anything. Get instant answers with TesAI.</p>
-
-<a href="login.html">
-<button>Start Chat</button>
-</a>
-
-</div>
-
-<div class="features">
-
-<div class="feature">
-<h3>⚡ Fast Answers</h3>
-<p>Get quick responses powered by AI.</p>
-</div>
-
-<div class="feature">
-<h3>🧠 Smart AI</h3>
-<p>Advanced AI that understands your questions.</p>
-</div>
-
-<div class="feature">
-<h3>💬 Easy Chat</h3>
-<p>Simple chat interface like ChatGPT.</p>
-</div>
-
-</div>
-
-<footer>
-© 2026 TesAI • AI Assistant
-</footer>
-
-
-<button onclick="googleLogin()">Login with Google</button>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-const supabaseClient = supabase.createClient(
-"https://thhfwcmxidluvskeaebo.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.Q7QPaCbfwKesITzS9vDjh1lALvRZlt3wxAerAa4D7No"
-);
-
-async function googleLogin() {
-await supabaseClient.auth.signInWithOAuth({
-provider: "google"
-});
-}
 </script>
 
-<<script>
-async function githubLogin() {
-await supabaseClient.auth.signInWithOAuth({
-provider: "github"
-});
-}
-</script>>
+</body>
 </html>
-<button onclick="githubLogin()">Login with GitHub</button>
