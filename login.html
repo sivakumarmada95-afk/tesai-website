@@ -1,60 +1,64 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Chat</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-
 <body>
 
-<div id="chat"></div>
-<input id="input" placeholder="Ask..." onkeydown="if(event.key==='Enter')send()">
-<button onclick="send()">Send</button>
-<button onclick="logout()">Logout</button>
+<h2>Login</h2>
+
+<input id="email" placeholder="Email"><br>
+<input id="password" type="password" placeholder="Password"><br>
+
+<button onclick="login()">Login</button>
+<button onclick="signup()">Signup</button>
+
+<hr>
+
+<button onclick="googleLogin()">Login with Google</button>
 
 <script>
-
 const supabase = window.supabase.createClient(
-"https://thhfwcmxidluvskeaebo.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoaGZ3Y214aWRsdXZza2VhZWJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NzEzNTQsImV4cCI6MjA4OTI0NzM1NH0.Q7QPaCbfwKesITzS9vDjh1lALvRZlt3wxAerAa4D7No
+  "https://thhfwcmxidluvskeaebo.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoaGZ3Y214aWRsdXZza2VhZWJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NzEzNTQsImV4cCI6MjA4OTI0NzM1NH0.Q7QPaCbfwKesITzS9vDjh1lALvRZlt3wxAerAa4D7No
 "
 );
 
-// LOGIN CHECK
-(async()=>{
-const {data}=await supabase.auth.getUser();
-if(!data.user) location.href="login.html";
-})();
+// Email login
+async function login() {
+  const email = emailInput.value;
+  const password = passwordInput.value;
 
-// SEND MESSAGE
-async function send(){
-let msg=input.value;
-chat.innerHTML += "<p><b>You:</b>"+msg+"</p>";
-input.value="";
+  const { error } = await supabase.auth.signInWithPassword({
+    email, password
+  });
 
-// CALL BACKEND
-let res = await fetch("http://localhost:3000/chat",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({message:msg})
-});
-
-let data = await res.json();
-
-chat.innerHTML += "<p><b>AI:</b>"+data.reply+"</p>";
-
-// SAVE TO DB
-await supabase.from("messages").insert([
-{user_msg:msg, ai_msg:data.reply}
-]);
+  if (error) alert(error.message);
+  else window.location.href = "chat.html";
 }
 
-// LOGOUT
-async function logout(){
-await supabase.auth.signOut();
-location.href="login.html";
+// Signup
+async function signup() {
+  const email = emailInput.value;
+  const password = passwordInput.value;
+
+  const { error } = await supabase.auth.signUp({
+    email, password
+  });
+
+  if (error) alert(error.message);
+  else alert("Check email");
 }
 
+// Google login
+async function googleLogin() {
+  await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: window.location.origin + "/chat.html"
+    }
+  });
+}
 </script>
 
 </body>
