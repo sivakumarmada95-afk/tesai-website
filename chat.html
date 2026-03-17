@@ -1,60 +1,153 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Chat</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta charset="UTF-8">
+  <title>TesAI Chat</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #343541;
+      color: white;
+      display: flex;
+      height: 100vh;
+    }
+
+    .chat-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .msg {
+      margin-bottom: 15px;
+    }
+
+    .user {
+      text-align: right;
+      color: #10a37f;
+    }
+
+    .ai {
+      text-align: left;
+      color: white;
+    }
+
+    .input-box {
+      display: flex;
+      padding: 10px;
+      background: #202123;
+    }
+
+    input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      outline: none;
+      border-radius: 5px;
+    }
+
+    button {
+      margin-left: 10px;
+      padding: 10px;
+      background: #10a37f;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      background: #202123;
+    }
+  </style>
 </head>
 
 <body>
 
-<div id="chat"></div>
-<input id="input" placeholder="Ask..." onkeydown="if(event.key==='Enter')send()">
-<button onclick="send()">Send</button>
-<button onclick="logout()">Logout</button>
+<div class="chat-container">
+
+  <div class="top-bar">
+    <div>TesAI Chat</div>
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <div id="messages" class="messages"></div>
+
+  <div class="input-box">
+    <input id="input" placeholder="Ask something..." />
+    <button onclick="send()">Send</button>
+  </div>
+
+</div>
 
 <script>
-
-const supabase = window.supabase.createClient(
-"https://thhfwcmxidluvskeaebo.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoaGZ3Y214aWRsdXZza2VhZWJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NzEzNTQsImV4cCI6MjA4OTI0NzM1NH0.Q7QPaCbfwKesITzS9vDjh1lALvRZlt3wxAerAa4D7No
+const supabase = supabase.createClient(
+  "https://thhfwcmxidluvskeaebo.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoaGZ3Y214aWRsdXZza2VhZWJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NzEzNTQsImV4cCI6MjA4OTI0NzM1NH0.Q7QPaCbfwKesITzS9vDjh1lALvRZlt3wxAerAa4D7No
 "
 );
 
-// LOGIN CHECK
-(async()=>{
-const {data}=await supabase.auth.getUser();
-if(!data.user) location.href="login.html";
-})();
+// 🔐 Check login
+async function checkUser() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    window.location.href = "login.html";
+  }
+}
+checkUser();
 
-// SEND MESSAGE
-async function send(){
-let msg=input.value;
-chat.innerHTML += "<p><b>You:</b>"+msg+"</p>";
-input.value="";
+// 📤 Send message
+async function send() {
+  const input = document.getElementById("input");
+  const text = input.value;
 
-// CALL BACKEND
-let res = await fetch("http://localhost:3000/chat",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({message:msg})
+  if (!text) return;
+
+  addMessage("user", text);
+  input.value = "";
+
+  // Fake AI reply (for now)
+  const reply = "AI: " + text;
+
+  addMessage("ai", reply);
+
+  // Save to DB
+  await supabase.from("messages").insert([
+    { user_msg: text, ai_msg: reply }
+  ]);
+}
+
+// 🧠 Add message to UI
+function addMessage(type, text) {
+  const div = document.createElement("div");
+  div.className = "msg " + type;
+  div.innerText = text;
+  document.getElementById("messages").appendChild(div);
+}
+
+// 🚪 Logout
+async function logout() {
+  await supabase.auth.signOut();
+  window.location.href = "login.html";
+}
+
+// ⌨️ Enter key support
+document.getElementById("input").addEventListener("keypress", function(e) {
+  if (e.key === "Enter") {
+    send();
+  }
 });
-
-let data = await res.json();
-
-chat.innerHTML += "<p><b>AI:</b>"+data.reply+"</p>";
-
-// SAVE TO DB
-await supabase.from("messages").insert([
-{user_msg:msg, ai_msg:data.reply}
-]);
-}
-
-// LOGOUT
-async function logout(){
-await supabase.auth.signOut();
-location.href="login.html";
-}
-
 </script>
 
 </body>
