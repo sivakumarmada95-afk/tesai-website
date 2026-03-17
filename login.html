@@ -1,145 +1,141 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>TesAI Login</title>
+<title>TesAI Chat</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-body {
-font-family: Arial;
-background:#f3f4f6;
-display:flex;
-justify-content:center;
-align-items:center;
+body{margin:0;font-family:Arial;background:#343541;color:white;}
+
+.sidebar{
+width:250px;
 height:100vh;
+background:#202123;
+position:fixed;
+padding:15px;
 }
 
-.box {
-background:white;
-padding:30px;
-border-radius:10px;
-width:350px;
-text-align:center;
-box-shadow:0 0 10px rgba(0,0,0,0.1);
-}
-
-input {
+.sidebar button{
 width:100%;
-padding:12px;
 margin:10px 0;
-border:1px solid #ccc;
-border-radius:5px;
-}
-
-button {
-width:100%;
-padding:12px;
-margin-top:10px;
+padding:10px;
+background:#444;
 border:none;
-border-radius:5px;
+color:white;
 cursor:pointer;
 }
 
-.blue {background:#2563eb;color:white;}
-.red {background:#ea4335;color:white;}
-.black {background:black;color:white;}
+.chat{
+margin-left:250px;
+display:flex;
+flex-direction:column;
+height:100vh;
+}
+
+.messages{
+flex:1;
+overflow-y:auto;
+padding:20px;
+}
+
+.msg{
+margin:10px;
+padding:10px;
+border-radius:8px;
+max-width:70%;
+}
+
+.user{background:#2563eb;margin-left:auto;}
+.bot{background:#444654;}
+
+.input{
+display:flex;
+padding:10px;
+background:#40414f;
+}
+
+input{
+flex:1;
+padding:10px;
+border:none;
+}
+
+button.send{
+padding:10px;
+background:#10a37f;
+border:none;
+color:white;
+}
 </style>
 
 </head>
 
 <body>
 
-<div class="box">
-<h2>TesAI Login</h2>
+<div class="sidebar">
+<h3>TesAI</h3>
+<button onclick="newChat()">+ New Chat</button>
+<button onclick="logout()">Logout</button>
+</div>
 
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
+<div class="chat">
 
-<button class="blue" onclick="loginEmail()">Login with Email</button>
-<button class="blue" onclick="signupEmail()">Create Account</button>
+<div id="messages" class="messages"></div>
 
-<hr>
+<div class="input">
+<input id="input" placeholder="Ask anything..."
+onkeydown="if(event.key==='Enter') send()">
+<button class="send" onclick="send()">Send</button>
+</div>
 
-<button class="red" onclick="googleLogin()">Login with Google</button>
-<button class="black" onclick="githubLogin()">Login with GitHub</button>
 </div>
 
 <script>
 
-// 🔥 VERY IMPORTANT FIX
-const supabaseClient = window.supabase.createClient(
+const supabase = window.supabase.createClient(
 "https://thhfwcmxidluvskeaebo.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoaGZ3Y214aWRsdXZza2VhZWJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NzEzNTQsImV4cCI6MjA4OTI0NzM1NH0.Q7QPaCbfwKesITzS9vDjh1lALvRZlt3wxAerAa4D7No"
+"YOUR_ANON_KEY"
 );
 
-// EMAIL LOGIN
-async function loginEmail() {
-try {
-const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
+// CHECK LOGIN
+(async ()=>{
+const {data}=await supabase.auth.getUser();
+if(!data.user) location.href="login.html";
+})();
 
-const { error } = await supabaseClient.auth.signInWithPassword({
-email,
-password
-});
-
-if (error) throw error;
-
-alert("Login success ✅");
-window.location.href = "chat.html";
-
-} catch (err) {
-alert(err.message);
-}
+// ADD MESSAGE
+function add(text,type){
+let d=document.createElement("div");
+d.className="msg "+type;
+d.innerText=text;
+messages.appendChild(d);
+messages.scrollTop=messages.scrollHeight;
 }
 
-// SIGNUP
-async function signupEmail() {
-try {
-const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
+// SEND
+function send(){
+let text=input.value.trim();
+if(!text) return;
 
-const { error } = await supabaseClient.auth.signUp({
-email,
-password
-});
+add(text,"user");
+input.value="";
 
-if (error) throw error;
-
-alert("Signup success ✅ Check email");
-
-} catch (err) {
-alert(err.message);
-}
+// FAKE AI
+setTimeout(()=>{
+add("AI: "+text,"bot");
+},500);
 }
 
-// GOOGLE LOGIN
-async function googleLogin() {
-try {
-await supabaseClient.auth.signInWithOAuth({
-provider: "google",
-options: {
-redirectTo: "https://tesai.in/chat.html"
-}
-});
-} catch (err) {
-alert(err.message);
-}
+// NEW CHAT
+function newChat(){
+messages.innerHTML="";
 }
 
-// GITHUB LOGIN
-async function githubLogin() {
-try {
-await supabaseClient.auth.signInWithOAuth({
-provider: "github",
-options: {
-redirectTo: "https://tesai.in/chat.html"
-}
-});
-} catch (err) {
-alert(err.message);
-}
+// LOGOUT
+async function logout(){
+await supabase.auth.signOut();
+location.href="login.html";
 }
 
 </script>
