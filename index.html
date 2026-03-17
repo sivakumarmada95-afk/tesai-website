@@ -1,173 +1,94 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TesAI Login</title>
+<title>TesAI</title>
 
 <style>
-body {
-font-family: Arial, sans-serif;
-background: #f4f6f8;
-display: flex;
-justify-content: center;
-align-items: center;
-height: 100vh;
-margin: 0;
+body{
+margin:0;
+font-family:Arial;
+background:#0f172a;
+color:white;
+text-align:center;
 }
 
-.container {
-background: #fff;
-padding: 30px;
-border-radius: 10px;
-width: 350px;
-box-shadow: 0 0 15px rgba(0,0,0,0.1);
-text-align: center;
+header{
+padding:20px;
+font-size:24px;
+font-weight:bold;
 }
 
-h2 {
-margin-bottom: 20px;
+.hero{
+margin-top:120px;
 }
 
-input {
-width: 100%;
-padding: 12px;
-margin: 10px 0;
-border-radius: 5px;
-border: 1px solid #ccc;
+h1{
+font-size:50px;
+margin-bottom:10px;
 }
 
-button {
-width: 100%;
-padding: 12px;
-margin-top: 10px;
-border: none;
-border-radius: 5px;
-cursor: pointer;
-font-size: 14px;
+p{
+color:#9ca3af;
+font-size:18px;
 }
 
-.email-btn {
-background: #2d6cdf;
-color: white;
+button{
+margin-top:30px;
+padding:15px 35px;
+font-size:18px;
+background:#10a37f;
+border:none;
+color:white;
+border-radius:8px;
+cursor:pointer;
 }
 
-.signup-btn {
-background: #3b82f6;
-color: white;
+button:hover{
+background:#0e8e6d;
 }
 
-.google-btn {
-background: #ea4335;
-color: white;
+.features{
+margin-top:80px;
+display:flex;
+justify-content:center;
+gap:30px;
+flex-wrap:wrap;
 }
 
-.github-btn {
-background: black;
-color: white;
+.box{
+background:#1e293b;
+padding:20px;
+width:250px;
+border-radius:10px;
 }
 
-button:hover {
-opacity: 0.9;
+footer{
+margin-top:100px;
+padding:20px;
+color:#6b7280;
 }
 </style>
+
 </head>
 
 <body>
 
-<div class="container">
-<h2>TesAI Login</h2>
+<header>TesAI</header>
 
-<input type="email" id="email" placeholder="Enter Email">
-<input type="password" id="password" placeholder="Enter Password">
+<div class="hero">
+<h1>Your AI Assistant</h1>
+<p>Chat smarter. Faster. Better.</p>
 
-<button class="email-btn" onclick="loginEmail()">Login with Email</button>
-<button class="signup-btn" onclick="signupEmail()">Create Account</button>
-
-<hr>
-
-<button class="google-btn" onclick="googleLogin()">Login with Google</button>
-<button class="github-btn" onclick="githubLogin()">Login with GitHub</button>
-
+<button onclick="location.href='login.html'">Start Chat</button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<div class="features">
+<div class="box">⚡ Fast AI responses</div>
+<div class="box">🧠 Smart answers</div>
+<div class="box">💬 Chat like ChatGPT</div>
+</div>
 
-<script>
-
-// ===== CONFIG =====
-const supabaseClient = supabase.createClient(
-"https://thhfwcmxidluvskeaebo.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoaGZ3Y214aWRsdXZza2VhZWJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NzEzNTQsImV4cCI6MjA4OTI0NzM1NH0.Q7QPaCbfwKesITzS9vDjh1lALvRZlt3wxAerAa4D7No"
-);
-
-// ===== LOGIN =====
-async function loginEmail() {
-const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
-
-const { error } = await supabaseClient.auth.signInWithPassword({
-email,
-password
-});
-
-if (error) {
-alert(error.message);
-} else {
-alert("Login successful ✅");
-window.location.href = "chat.html";
-}
-}
-
-// ===== SIGNUP =====
-async function signupEmail() {
-const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
-
-const { error } = await supabaseClient.auth.signUp({
-email,
-password
-});
-
-if (error) {
-alert(error.message);
-} else {
-alert("Account created ✅ Check your email");
-}
-}
-
-// ===== GOOGLE LOGIN =====
-async function googleLogin() {
-await supabaseClient.auth.signInWithOAuth({
-provider: "google",
-options: {
-redirectTo: "https://tesai.in"
-}
-});
-}
-
-// ===== GITHUB LOGIN =====
-async function githubLogin() {
-await supabaseClient.auth.signInWithOAuth({
-provider: "github",
-options: {
-redirectTo: "https://tesai.in"
-}
-});
-}
-
-// ===== CHECK USER =====
-async function checkUser() {
-const { data } = await supabaseClient.auth.getUser();
-
-if (data.user) {
-console.log("User:", data.user.email);
-}
-}
-
-checkUser();
-
-</script>
+<footer>© 2026 TesAI</footer>
 
 </body>
 </html>
