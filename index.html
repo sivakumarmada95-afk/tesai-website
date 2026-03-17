@@ -88,7 +88,82 @@ font-size:14px;
 
 </head>
 
-<body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+// ====== CONFIG ======
+const supabaseClient = supabase.createClient(
+"https://thhfwcmxidluvskeaebo.supabase.co",
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.Q7QPaCbfwKesITzS9vDjh1lALvRZlt3wxAerAa4D7No"
+);
+
+// ====== EMAIL LOGIN ======
+async function loginEmail() {
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
+
+const { error } = await supabaseClient.auth.signInWithPassword({
+email,
+password
+});
+
+if (error) {
+alert(error.message);
+} else {
+alert("Login Successful ✅");
+window.location.href = "chat.html";
+}
+}
+
+// ====== SIGNUP ======
+async function signupEmail() {
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
+
+const { error } = await supabaseClient.auth.signUp({
+email,
+password
+});
+
+if (error) {
+alert(error.message);
+} else {
+alert("Account Created ✅ Check your email");
+}
+}
+
+// ====== GOOGLE LOGIN ======
+async function googleLogin() {
+await supabaseClient.auth.signInWithOAuth({
+provider: "google",
+options: {
+redirectTo: "https://tesai.in"
+}
+});
+}
+
+// ====== GITHUB LOGIN ======
+async function githubLogin() {
+await supabaseClient.auth.signInWithOAuth({
+provider: "github",
+options: {
+redirectTo: "https://tesai.in"
+}
+});
+}
+
+// ====== CHECK LOGIN SESSION ======
+async function checkUser() {
+const { data } = await supabaseClient.auth.getUser();
+
+if (data.user) {
+console.log("User Logged In:", data.user.email);
+}
+}
+
+checkUser();
+
+</script><body>
 
 <header>
 TesAI
