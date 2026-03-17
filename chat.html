@@ -6,80 +6,66 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-body {
-margin:0;
-font-family:Arial;
-background:#343541;
-color:white;
-}
+body{margin:0;font-family:Arial;background:#343541;color:white;}
 
-.sidebar {
-width:260px;
+.sidebar{
+width:250px;
 height:100vh;
 background:#202123;
 position:fixed;
-padding:20px;
+padding:15px;
 }
 
-.sidebar button {
+.sidebar button{
 width:100%;
-padding:10px;
 margin:10px 0;
-background:#3a3b45;
+padding:10px;
+background:#444;
 border:none;
 color:white;
 cursor:pointer;
 }
 
-.chat {
-margin-left:260px;
+.chat{
+margin-left:250px;
 display:flex;
 flex-direction:column;
 height:100vh;
 }
 
-.messages {
+.messages{
 flex:1;
 overflow-y:auto;
 padding:20px;
 }
 
-.msg {
-margin:10px 0;
-padding:12px;
-border-radius:10px;
+.msg{
+margin:10px;
+padding:10px;
+border-radius:8px;
 max-width:70%;
 }
 
-.user {
-background:#2563eb;
-margin-left:auto;
-}
+.user{background:#2563eb;margin-left:auto;}
+.bot{background:#444654;}
 
-.bot {
-background:#444654;
-}
-
-.input-area {
+.input{
 display:flex;
-padding:15px;
+padding:10px;
 background:#40414f;
 }
 
-input {
+input{
 flex:1;
-padding:12px;
+padding:10px;
 border:none;
-border-radius:5px;
 }
 
-button.send {
-margin-left:10px;
-padding:12px 20px;
+button.send{
+padding:10px;
 background:#10a37f;
 border:none;
 color:white;
-cursor:pointer;
 }
 </style>
 
@@ -95,87 +81,61 @@ cursor:pointer;
 
 <div class="chat">
 
-<div class="messages" id="messages"></div>
+<div id="messages" class="messages"></div>
 
-<div class="input-area">
-<input id="input" placeholder="Send a message..." 
-onkeydown="if(event.key==='Enter') sendMsg()">
-<button class="send" onclick="sendMsg()">Send</button>
+<div class="input">
+<input id="input" placeholder="Ask anything..."
+onkeydown="if(event.key==='Enter') send()">
+<button class="send" onclick="send()">Send</button>
 </div>
 
 </div>
 
 <script>
 
-// ===== SUPABASE =====
-const supabaseClient = window.supabase.createClient(
+const supabase = window.supabase.createClient(
 "https://thhfwcmxidluvskeaebo.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoaGZ3Y214aWRsdXZza2VhZWJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NzEzNTQsImV4cCI6MjA4OTI0NzM1NH0.Q7QPaCbfwKesITzS9vDjh1lALvRZlt3wxAerAa4D7No
-"
+"YOUR_ANON_KEY"
 );
 
-// ===== CHECK LOGIN =====
-async function checkUser(){
-const { data } = await supabaseClient.auth.getUser();
-if(!data.user){
-window.location.href="login.html";
-}
-}
-checkUser();
+// CHECK LOGIN
+(async ()=>{
+const {data}=await supabase.auth.getUser();
+if(!data.user) location.href="login.html";
+})();
 
-// ===== CHAT SYSTEM =====
-const messagesDiv = document.getElementById("messages");
-
-function addMessage(text, type){
-const div = document.createElement("div");
-div.className = "msg " + type;
-div.innerText = text;
-messagesDiv.appendChild(div);
-messagesDiv.scrollTop = messagesDiv.scrollHeight;
+// ADD MESSAGE
+function add(text,type){
+let d=document.createElement("div");
+d.className="msg "+type;
+d.innerText=text;
+messages.appendChild(d);
+messages.scrollTop=messages.scrollHeight;
 }
 
-// ===== SEND =====
-function sendMsg(){
-const input = document.getElementById("input");
-const text = input.value.trim();
+// SEND
+function send(){
+let text=input.value.trim();
 if(!text) return;
 
-addMessage(text, "user");
+add(text,"user");
 input.value="";
 
-// Fake AI response
+// FAKE AI
 setTimeout(()=>{
-addMessage("AI: " + text, "bot");
-saveChat(text, "AI: " + text);
+add("AI: "+text,"bot");
 },500);
 }
 
-// ===== STORAGE =====
-function saveChat(user, bot){
-let chats = JSON.parse(localStorage.getItem("tesai_chat")) || [];
-chats.push({user, bot});
-localStorage.setItem("tesai_chat", JSON.stringify(chats));
-}
-
-function loadChat(){
-let chats = JSON.parse(localStorage.getItem("tesai_chat")) || [];
-chats.forEach(c=>{
-addMessage(c.user,"user");
-addMessage(c.bot,"bot");
-});
-}
-loadChat();
-
-// ===== NEW CHAT =====
+// NEW CHAT
 function newChat(){
-localStorage.removeItem("tesai_chat");
-location.reload();
+messages.innerHTML="";
 }
 
-// ===== LOGOUT =====
+// LOGOUT
 async function logout(){
-await supabaseClient.auth.signOut();
-window.location.href="login.html";
+await supabase.auth.signOut();
+location.href="login.html";
 }
 
 </script>
