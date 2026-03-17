@@ -1,22 +1,60 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>TesAI</title>
-<style>
-body{margin:0;font-family:Arial;background:#0f172a;color:white;text-align:center;}
-h1{margin-top:120px;font-size:50px;}
-button{padding:15px 30px;background:#10a37f;border:none;color:white;border-radius:8px;cursor:pointer;}
-</style>
+<title>Chat</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
 
-<h1>TesAI</h1>
-<p>Your Smart AI Assistant</p>
+<div id="chat"></div>
+<input id="input" placeholder="Ask..." onkeydown="if(event.key==='Enter')send()">
+<button onclick="send()">Send</button>
+<button onclick="logout()">Logout</button>
 
-<input style="padding:15px;width:300px;" placeholder="Ask anything...">
-<br><br>
-<button onclick="location.href='login.html'">Start Chat</button>
+<script>
+
+const supabase = window.supabase.createClient(
+"https://thhfwcmxidluvskeaebo.supabase.co",
+"YOUR_ANON_KEY"
+);
+
+// LOGIN CHECK
+(async()=>{
+const {data}=await supabase.auth.getUser();
+if(!data.user) location.href="login.html";
+})();
+
+// SEND MESSAGE
+async function send(){
+let msg=input.value;
+chat.innerHTML += "<p><b>You:</b>"+msg+"</p>";
+input.value="";
+
+// CALL BACKEND
+let res = await fetch("http://localhost:3000/chat",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({message:msg})
+});
+
+let data = await res.json();
+
+chat.innerHTML += "<p><b>AI:</b>"+data.reply+"</p>";
+
+// SAVE TO DB
+await supabase.from("messages").insert([
+{user_msg:msg, ai_msg:data.reply}
+]);
+}
+
+// LOGOUT
+async function logout(){
+await supabase.auth.signOut();
+location.href="login.html";
+}
+
+</script>
 
 </body>
 </html>
