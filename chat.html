@@ -1,340 +1,184 @@
 <!DOCTYPE html>
-<html lang="en">
-<head><title>TesAI - Free AI Assistant</title>
-<meta name="description" content="TesAI is a smart AI assistant like ChatGPT that helps answer questions and solve problems."/>
-<meta name="robots" content="index, follow">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TesAI</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<html>
+<head>
+<title>TesAI Chat</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+body {
+margin:0;
+font-family:Arial;
+background:#343541;
+color:white;
+}
+
+.sidebar {
+width:260px;
+height:100vh;
+background:#202123;
+position:fixed;
+padding:20px;
+}
+
+.sidebar button {
+width:100%;
+padding:10px;
+margin:10px 0;
+background:#3a3b45;
+border:none;
+color:white;
+cursor:pointer;
+}
+
+.chat {
+margin-left:260px;
+display:flex;
+flex-direction:column;
+height:100vh;
+}
+
+.messages {
+flex:1;
+overflow-y:auto;
+padding:20px;
+}
+
+.msg {
+margin:10px 0;
+padding:12px;
+border-radius:10px;
+max-width:70%;
+}
+
+.user {
+background:#2563eb;
+margin-left:auto;
+}
+
+.bot {
+background:#444654;
+}
+
+.input-area {
+display:flex;
+padding:15px;
+background:#40414f;
+}
+
+input {
+flex:1;
+padding:12px;
+border:none;
+border-radius:5px;
+}
+
+button.send {
+margin-left:10px;
+padding:12px 20px;
+background:#10a37f;
+border:none;
+color:white;
+cursor:pointer;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="sidebar">
+<h3>TesAI</h3>
+<button onclick="newChat()">+ New Chat</button>
+<button onclick="logout()">Logout</button>
+</div>
+
+<div class="chat">
+
+<div class="messages" id="messages"></div>
+
+<div class="input-area">
+<input id="input" placeholder="Send a message..." 
+onkeydown="if(event.key==='Enter') sendMsg()">
+<button class="send" onclick="sendMsg()">Send</button>
+</div>
+
+</div>
 
 <script>
 
-const supabase = supabase.createClient(
+// ===== SUPABASE =====
+const supabaseClient = window.supabase.createClient(
 "https://thhfwcmxidluvskeaebo.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoaGZ3Y214aWRsdXZza2VhZWJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NzEzNTQsImV4cCI6MjA4OTI0NzM1NH0.Q7QPaCbfwKesITzS9vDjh1lALvRZlt3wxAerAa4D7No"
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoaGZ3Y214aWRsdXZza2VhZWJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NzEzNTQsImV4cCI6MjA4OTI0NzM1NH0.Q7QPaCbfwKesITzS9vDjh1lALvRZlt3wxAerAa4D7No
+"
 );
 
+// ===== CHECK LOGIN =====
 async function checkUser(){
-
-const { data } = await supabase.auth.getUser();
-
+const { data } = await supabaseClient.auth.getUser();
 if(!data.user){
-location.href="login.html";
+window.location.href="login.html";
 }
-
 }
-
 checkUser();
 
+// ===== CHAT SYSTEM =====
+const messagesDiv = document.getElementById("messages");
+
+function addMessage(text, type){
+const div = document.createElement("div");
+div.className = "msg " + type;
+div.innerText = text;
+messagesDiv.appendChild(div);
+messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+// ===== SEND =====
+function sendMsg(){
+const input = document.getElementById("input");
+const text = input.value.trim();
+if(!text) return;
+
+addMessage(text, "user");
+input.value="";
+
+// Fake AI response
+setTimeout(()=>{
+addMessage("AI: " + text, "bot");
+saveChat(text, "AI: " + text);
+},500);
+}
+
+// ===== STORAGE =====
+function saveChat(user, bot){
+let chats = JSON.parse(localStorage.getItem("tesai_chat")) || [];
+chats.push({user, bot});
+localStorage.setItem("tesai_chat", JSON.stringify(chats));
+}
+
+function loadChat(){
+let chats = JSON.parse(localStorage.getItem("tesai_chat")) || [];
+chats.forEach(c=>{
+addMessage(c.user,"user");
+addMessage(c.bot,"bot");
+});
+}
+loadChat();
+
+// ===== NEW CHAT =====
+function newChat(){
+localStorage.removeItem("tesai_chat");
+location.reload();
+}
+
+// ===== LOGOUT =====
+async function logout(){
+await supabaseClient.auth.signOut();
+window.location.href="login.html";
+}
+
 </script>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f7f7f8;
-      color: #111827;
-      height: 100vh;
-      display: flex;
-    }
-
-    .sidebar {
-      width: 260px;
-      background: #171717;
-      color: white;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .brand {
-      font-size: 32px;
-      font-weight: 700;
-      margin: 0;
-    }
-
-    .new-chat-btn {
-      background: #2b2b2b;
-      color: white;
-      border: 1px solid #3a3a3a;
-      padding: 12px 14px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 15px;
-      text-align: left;
-    }
-
-    .new-chat-btn:hover {
-      background: #343434;
-    }
-
-    .history {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 6px;
-    }
-
-    .history-item {
-      padding: 10px 12px;
-      border-radius: 8px;
-      color: #e5e7eb;
-      background: transparent;
-      font-size: 15px;
-    }
-
-    .main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-
-    .topbar {
-      padding: 18px 24px;
-      border-bottom: 1px solid #e5e7eb;
-      background: white;
-    }
-
-    .title {
-      margin: 0;
-      font-size: 22px;
-      font-weight: 700;
-    }
-
-    .chat-wrap {
-      flex: 1;
-      overflow-y: auto;
-      padding: 24px 0;
-    }
-
-    .messages {
-      width: 100%;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 0 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .message-row {
-      display: flex;
-      width: 100%;
-    }
-
-    .message-row.user {
-      justify-content: flex-end;
-    }
-
-    .message-row.ai {
-      justify-content: flex-start;
-    }
-
-    .message {
-      max-width: 75%;
-      padding: 14px 16px;
-      border-radius: 16px;
-      line-height: 1.5;
-      font-size: 16px;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
-
-    .message.user {
-      background: #dbeafe;
-      color: #111827;
-      border-bottom-right-radius: 6px;
-    }
-
-    .message.ai {
-      background: white;
-      color: #111827;
-      border: 1px solid #e5e7eb;
-      border-bottom-left-radius: 6px;
-    }
-
-    .composer-wrap {
-      border-top: 1px solid #e5e7eb;
-      background: white;
-      padding: 16px;
-    }
-
-    .composer {
-      max-width: 900px;
-      margin: 0 auto;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    #userInput {
-      flex: 1;
-      padding: 14px 16px;
-      font-size: 16px;
-      border: 1px solid #d1d5db;
-      border-radius: 12px;
-      outline: none;
-    }
-
-    #userInput:focus {
-      border-color: #9ca3af;
-    }
-
-    #sendBtn {
-      padding: 14px 20px;
-      font-size: 15px;
-      border: none;
-      border-radius: 12px;
-      background: #111827;
-      color: white;
-      cursor: pointer;
-    }
-
-    #sendBtn:hover {
-      background: #1f2937;
-    }
-
-    .hint {
-      max-width: 900px;
-      margin: 8px auto 0;
-      padding: 0 4px;
-      font-size: 12px;
-      color: #6b7280;
-    }
-
-    @media (max-width: 768px) {
-      .sidebar {
-        display: none;
-      }
-
-      .message {
-        max-width: 88%;
-      }
-
-      .title {
-        font-size: 20px;
-      }
-    }
-  </style>
-</head>
-<body>
-
-  <aside class="sidebar">
-    <h1 class="brand">TesAI</h1>
-    <button class="new-chat-btn" onclick="clearChat()">+ New Chat</button>
-
-    <div class="history">
-      <div class="history-item">Chat 1</div>
-      <div class="history-item">Chat 2</div>
-    </div>
-  </aside>
-
-  <main class="main">
-    <div class="topbar">
-      <h2 class="title">TesAI Assistant</h2>
-    </div>
-
-    <div class="chat-wrap" id="chatWrap">
-      <div class="messages" id="messages"></div>
-    </div>
-
-    <div class="composer-wrap">
-      <div class="composer">
-        <input id="userInput" type="text" placeholder="Ask anything..." />
-        <button id="sendBtn">Send</button>
-      </div>
-      <div class="hint">TesAI can make mistakes. Check important information.</div>
-    </div>
-  </main>
-
-  <script>
-    const messagesEl = document.getElementById("messages");
-    const inputEl = document.getElementById("userInput");
-    const sendBtnEl = document.getElementById("sendBtn");
-    const chatWrapEl = document.getElementById("chatWrap");
-
-    function escapeHtml(text) {
-      const div = document.createElement("div");
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
-    function addMessage(role, text, id = null) {
-      const row = document.createElement("div");
-      row.className = `message-row ${role}`;
-
-      const bubble = document.createElement("div");
-      bubble.className = `message ${role}`;
-      if (id) bubble.id = id;
-      bubble.innerHTML = escapeHtml(text);
-
-      row.appendChild(bubble);
-      messagesEl.appendChild(row);
-      scrollToBottom();
-    }
-
-    function scrollToBottom() {
-      chatWrapEl.scrollTop = chatWrapEl.scrollHeight;
-    }
-
-    function clearChat() {
-      messagesEl.innerHTML = "";
-      inputEl.focus();
-    }
-
-    async function sendMessage() {
-      const message = inputEl.value.trim();
-      if (!message) return;
-
-      addMessage("user", message);
-      inputEl.value = "";
-      inputEl.focus();
-
-      addMessage("ai", "TesAI is thinking...", "loadingMsg");
-
-      try {
-        const response = await fetch("/api/chat", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ message })
-        });
-
-        const data = await response.json();
-
-        const loadingEl = document.getElementById("loadingMsg");
-        if (loadingEl) {
-          loadingEl.parentElement.remove();
-        }
-
-        addMessage("ai", data.reply || "No reply received.");
-      } catch (error) {
-        const loadingEl = document.getElementById("loadingMsg");
-        if (loadingEl) {
-          loadingEl.parentElement.remove();
-        }
-
-        addMessage("ai", "Error connecting to AI.");
-      }
-    }
-
-    sendBtnEl.addEventListener("click", sendMessage);
-
-    inputEl.addEventListener("keypress", function(event) {
-      if (event.key === "Enter") {
-        sendMessage();
-      }
-    });
-
-    window.onload = function() {
-      inputEl.focus();
-    };
-  </script>
 </body>
 </html>
