@@ -1,69 +1,49 @@
 <!DOCTYPE html>
 <html>
 <head>
-
 <title>TesAI Login</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
-body{
-font-family:Arial;
-background:#f4f6fb;
+body {
+font-family: Arial;
+background:#f3f4f6;
 display:flex;
 justify-content:center;
 align-items:center;
 height:100vh;
-margin:0;
 }
 
-.box{
+.box {
 background:white;
-padding:40px;
+padding:30px;
 border-radius:10px;
-width:340px;
+width:350px;
 text-align:center;
-box-shadow:0 5px 20px rgba(0,0,0,0.1);
+box-shadow:0 0 10px rgba(0,0,0,0.1);
 }
 
-h2{
-margin-bottom:20px;
-}
-
-input{
+input {
 width:100%;
-padding:10px;
-margin:8px 0;
-border:1px solid #ddd;
+padding:12px;
+margin:10px 0;
+border:1px solid #ccc;
 border-radius:5px;
 }
 
-button{
+button {
 width:100%;
-padding:10px;
+padding:12px;
 margin-top:10px;
 border:none;
-border-radius:6px;
+border-radius:5px;
 cursor:pointer;
-font-weight:bold;
 }
 
-.emailbtn{
-background:#2563eb;
-color:white;
-}
-
-.googlebtn{
-background:#ea4335;
-color:white;
-}
-
-.githubbtn{
-background:#000;
-color:white;
-}
-
+.blue {background:#2563eb;color:white;}
+.red {background:#ea4335;color:white;}
+.black {background:black;color:white;}
 </style>
 
 </head>
@@ -71,99 +51,95 @@ color:white;
 <body>
 
 <div class="box">
-
 <h2>TesAI Login</h2>
 
 <input id="email" placeholder="Email">
-
 <input id="password" type="password" placeholder="Password">
 
-<button class="emailbtn" onclick="emailLogin()">Login with Email</button>
-
-<button class="emailbtn" onclick="signup()">Create Account</button>
+<button class="blue" onclick="loginEmail()">Login with Email</button>
+<button class="blue" onclick="signupEmail()">Create Account</button>
 
 <hr>
 
-<button class="googlebtn" onclick="googleLogin()">Login with Google</button>
-
-<button class="githubbtn" onclick="githubLogin()">Login with GitHub</button>
-
+<button class="red" onclick="googleLogin()">Login with Google</button>
+<button class="black" onclick="githubLogin()">Login with GitHub</button>
 </div>
-
 
 <script>
 
-const supabase = supabase.createClient(
+// 🔥 VERY IMPORTANT FIX
+const supabaseClient = window.supabase.createClient(
 "https://thhfwcmxidluvskeaebo.supabase.co",
 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRoaGZ3Y214aWRsdXZza2VhZWJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NzEzNTQsImV4cCI6MjA4OTI0NzM1NH0.Q7QPaCbfwKesITzS9vDjh1lALvRZlt3wxAerAa4D7No"
-)
+);
 
+// EMAIL LOGIN
+async function loginEmail() {
+try {
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
 
+const { error } = await supabaseClient.auth.signInWithPassword({
+email,
+password
+});
 
-async function emailLogin(){
+if (error) throw error;
 
-const email=document.getElementById("email").value
-const password=document.getElementById("password").value
+alert("Login success ✅");
+window.location.href = "chat.html";
 
-const {data,error}=await supabase.auth.signInWithPassword({
-email:email,
-password:password
-})
-
-if(error){
-
-alert(error.message)
-
-}else{
-
-location.href="chat.html"
-
+} catch (err) {
+alert(err.message);
+}
 }
 
+// SIGNUP
+async function signupEmail() {
+try {
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
+
+const { error } = await supabaseClient.auth.signUp({
+email,
+password
+});
+
+if (error) throw error;
+
+alert("Signup success ✅ Check email");
+
+} catch (err) {
+alert(err.message);
+}
 }
 
-
-
-async function signup(){
-
-const email=document.getElementById("email").value
-const password=document.getElementById("password").value
-
-const {data,error}=await supabase.auth.signUp({
-email:email,
-password:password
-})
-
-if(error){
-
-alert(error.message)
-
-}else{
-
-alert("Account created. Please login.")
-
+// GOOGLE LOGIN
+async function googleLogin() {
+try {
+await supabaseClient.auth.signInWithOAuth({
+provider: "google",
+options: {
+redirectTo: "https://tesai.in/chat.html"
+}
+});
+} catch (err) {
+alert(err.message);
+}
 }
 
+// GITHUB LOGIN
+async function githubLogin() {
+try {
+await supabaseClient.auth.signInWithOAuth({
+provider: "github",
+options: {
+redirectTo: "https://tesai.in/chat.html"
 }
-
-
-
-async function googleLogin(){
-
-await supabase.auth.signInWithOAuth({
-provider:"google"
-})
-
+});
+} catch (err) {
+alert(err.message);
 }
-
-
-
-async function githubLogin(){
-
-await supabase.auth.signInWithOAuth({
-provider:"github"
-})
-
 }
 
 </script>
