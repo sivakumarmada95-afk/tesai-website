@@ -178,8 +178,6 @@ TesAI
 <a href="login.html">
 <button>Start Chat</button>
 </a>
-Start Chat
-</button>
 
 </div>
 
@@ -224,5 +222,12 @@ provider: "google"
 }
 </script>
 
-</body>
+<<script>
+async function githubLogin() {
+await supabaseClient.auth.signInWithOAuth({
+provider: "github"
+});
+}
+</script>>
 </html>
+<button onclick="githubLogin()">Login with GitHub</button>
